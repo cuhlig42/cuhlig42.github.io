@@ -7,6 +7,10 @@
   --linie: #cfc6e2;
   --flaeche: #e2daf1;
   --signal: #5b2be0;
+  --pink: #e8338a;
+  --schein-1: rgb(91 43 224 / 0.22);
+  --schein-2: rgb(232 51 138 / 0.14);
+  --schein-3: rgb(255 180 58 / 0.18);
 
   --schrift-text: system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
   --schrift-titel: "Iowan Old Style", "Palatino Linotype", Palatino, "Book Antiqua", Georgia, serif;
@@ -20,6 +24,10 @@
     --linie: #3a2d5c;
     --flaeche: #2a1f4d;
     --signal: #ffb43a;
+    --pink: #ff5fb0;
+    --schein-1: rgb(91 43 224 / 0.45);
+    --schein-2: rgb(255 95 176 / 0.2);
+    --schein-3: rgb(255 180 58 / 0.14);
   }
 }
 
@@ -69,17 +77,77 @@ a:focus-visible {
   padding: clamp(2.5rem, 12vh, 7rem) 1.25rem 3rem;
 }
 
+/* Leuchtender Hintergrund, rein mit CSS */
+
+body::before {
+  content: "";
+  position: fixed;
+  inset: 0;
+  z-index: -1;
+  pointer-events: none;
+  background:
+    radial-gradient(40rem 30rem at 85% -10%, var(--schein-1), transparent 70%),
+    radial-gradient(35rem 28rem at -10% 60%, var(--schein-2), transparent 70%),
+    radial-gradient(30rem 24rem at 70% 110%, var(--schein-3), transparent 70%);
+}
+
 /* Startseite */
+
+.seite.start,
+.fuss.start {
+  max-width: 68rem;
+}
+
+.held {
+  display: grid;
+  grid-template-columns: minmax(0, 1.15fr) minmax(0, 1fr);
+  align-items: center;
+  gap: clamp(2rem, 5vw, 4rem);
+}
+
+.vorzeile {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.6rem;
+  margin: 0 0 1.5rem;
+  padding: 0.4rem 0.9rem;
+  border: 1px solid var(--linie);
+  border-radius: 999px;
+  background: color-mix(in srgb, var(--flaeche) 60%, transparent);
+  font-size: 0.875rem;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--leise);
+}
+
+.vorzeile-punkt {
+  width: 0.55rem;
+  height: 0.55rem;
+  border-radius: 50%;
+  background: var(--pink);
+  box-shadow: 0 0 0 0 var(--pink);
+  animation: puls 2s ease-out infinite;
+}
+
+@keyframes puls {
+  70% { box-shadow: 0 0 0 0.6rem transparent; }
+  100% { box-shadow: 0 0 0 0 transparent; }
+}
 
 .name {
   margin: 0;
   font-family: var(--schrift-titel);
   font-style: italic;
   font-weight: 400;
-  font-size: clamp(3.25rem, 17vw, 8.5rem);
+  font-size: clamp(3.25rem, 11vw, 7.5rem);
   line-height: 0.95;
   letter-spacing: -0.02em;
   overflow-wrap: anywhere;
+  background: linear-gradient(100deg, var(--tinte) 30%, var(--signal) 70%, var(--pink));
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  padding-bottom: 0.08em;
 }
 
 .kurz {
@@ -89,49 +157,156 @@ a:focus-visible {
   color: var(--leise);
 }
 
-.kanaele {
-  list-style: none;
-  margin: clamp(2.5rem, 8vh, 4.5rem) 0 0;
-  padding: 0;
-  border-top: 1px solid var(--linie);
+.held-bild {
+  position: relative;
+  margin: 0;
+  justify-self: center;
+  width: 100%;
+  max-width: 26rem;
+  animation: schweben 7s ease-in-out infinite;
 }
 
-.kanaele li {
-  border-bottom: 1px solid var(--linie);
+.held-bild::before {
+  content: "";
+  position: absolute;
+  inset: 8%;
+  z-index: -1;
+  border-radius: 50%;
+  background: linear-gradient(135deg, var(--signal), var(--pink));
+  filter: blur(3.5rem);
+  opacity: 0.55;
+}
+
+.held-bild img {
+  display: block;
+  width: 100%;
+  height: auto;
+  border-radius: 2.25rem;
+  box-shadow: 0 1.5rem 3rem -1rem rgb(29 20 51 / 0.45);
+  transform: rotate(2deg);
+}
+
+@keyframes schweben {
+  50% { transform: translateY(-0.75rem); }
+}
+
+.kanaele {
+  list-style: none;
+  margin: clamp(3rem, 10vh, 5.5rem) 0 0;
+  padding: 0;
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(15rem, 1fr));
+  gap: 1rem;
 }
 
 .kanaele a {
+  position: relative;
   display: flex;
-  flex-wrap: wrap;
-  align-items: baseline;
-  justify-content: space-between;
-  gap: 0.25rem 1.5rem;
-  padding: 1.35rem 0.75rem;
-  margin: 0 -0.75rem;
+  flex-direction: column;
+  gap: 0.35rem;
+  height: 100%;
+  padding: 1.5rem;
+  border: 1px solid var(--linie);
+  border-radius: 1.25rem;
+  background: color-mix(in srgb, var(--flaeche) 55%, transparent);
+  -webkit-backdrop-filter: blur(12px);
+  backdrop-filter: blur(12px);
   text-decoration: none;
+  overflow: hidden;
+  transition: transform 0.25s ease, border-color 0.25s ease, box-shadow 0.25s ease;
+}
+
+.kanaele a::after {
+  content: "";
+  position: absolute;
+  inset: auto -30% -60% auto;
+  width: 12rem;
+  height: 12rem;
+  border-radius: 50%;
+  background: var(--akzent);
+  filter: blur(3rem);
+  opacity: 0;
+  transition: opacity 0.3s ease;
+  pointer-events: none;
 }
 
 .kanaele a:hover,
 .kanaele a:focus-visible {
-  background: var(--flaeche);
   color: var(--tinte);
+  transform: translateY(-4px);
+  border-color: var(--akzent);
+  box-shadow: 0 1rem 2.5rem -1rem var(--akzent);
+}
+
+.kanaele a:hover::after,
+.kanaele a:focus-visible::after {
+  opacity: 0.35;
+}
+
+.kanal-symbol {
+  display: grid;
+  place-items: center;
+  width: 3rem;
+  height: 3rem;
+  margin-bottom: 1rem;
+  border-radius: 0.9rem;
+  background: var(--akzent);
+  color: #fff;
+}
+
+.kanal-symbol svg {
+  width: 1.5rem;
+  height: 1.5rem;
 }
 
 .kanal-name {
   font-family: var(--schrift-titel);
-  font-size: clamp(1.75rem, 6vw, 2.5rem);
+  font-size: clamp(1.75rem, 4vw, 2.25rem);
   line-height: 1.1;
 }
 
 .kanal-ziel {
   color: var(--leise);
-  font-size: 1rem;
+  font-size: 0.9375rem;
   overflow-wrap: anywhere;
 }
 
-.kanaele a:hover .kanal-ziel,
-.kanaele a:focus-visible .kanal-ziel {
-  color: var(--signal);
+.kanal-pfeil {
+  position: absolute;
+  top: 1.25rem;
+  right: 1.4rem;
+  font-size: 1.4rem;
+  color: var(--leise);
+  transition: transform 0.25s ease, color 0.25s ease;
+}
+
+.kanaele a:hover .kanal-pfeil,
+.kanaele a:focus-visible .kanal-pfeil {
+  color: var(--akzent);
+  transform: translate(3px, -3px);
+}
+
+@media (max-width: 48rem) {
+  .held {
+    grid-template-columns: 1fr;
+  }
+
+  .held-bild {
+    max-width: 20rem;
+    grid-row: 1;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .vorzeile-punkt,
+  .held-bild {
+    animation: none;
+  }
+
+  .kanaele a,
+  .kanal-pfeil {
+    transition: none;
+  }
 }
 
 /* Fußzeile */
